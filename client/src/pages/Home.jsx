@@ -17,6 +17,8 @@ const Home = () => {
 
   const [editedTask, setEditedTask] = useState(null);
 
+  const year = new Date().getFullYear();
+
   useEffect(() => {
     // Fetch user data and update the items state
     const fetchUserData = async () => {
@@ -191,7 +193,6 @@ const Home = () => {
             value={inputText}
           />
 
-    <div>
         <ul>
           {items.map((task, index) => (
             <Item
@@ -203,11 +204,7 @@ const Home = () => {
               onEdit={editTaskText}
             />
           ))}
-        </ul>
-      </div>
-
-      <div>
-        <ul>
+        
           {completedItems.map((task, index) => (
             <Item
               key={index}
@@ -219,8 +216,21 @@ const Home = () => {
             />
           ))}
         </ul>
-      </div>
         </div>
+
+        <footer>
+          <p>
+            Copyright @  
+            <a
+              href="https://vivekdevshah-portfolio.netlify.app/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Vivek Dev Shah
+            </a>
+            , {year}
+          </p>
+        </footer>
     </div>
   );
 };
