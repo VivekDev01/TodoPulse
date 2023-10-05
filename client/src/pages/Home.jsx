@@ -15,6 +15,7 @@ const Home = () => {
 
   const [inputText, setInputText] = useState("");
   const [items, setItems] = useState([]);
+  const [completedItems, setCompletedItems] = useState([]);
 
   useEffect(() => {
     // Fetch user data and update the items state
@@ -30,6 +31,7 @@ const Home = () => {
         if(res.data.success){
           const userData = res.data.data;
           setItems(userData.createdTasks);
+          setCompletedItems(userData.completedTasks);
           message.success("User data fetched successfully");
         }
         else{
@@ -48,6 +50,31 @@ const Home = () => {
     setInputText(event.target.value);
   };
 
+  const toggleTask = async (taskId, taskType) => {
+    try {
+      const res = await axios.post(
+        `/api/v1/user/toggleTask/${taskId}`,
+        { taskType },  // sending the taskType (createdTasks or completedTasks)
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.data.success) {
+        const userData = res.data.data;
+        setItems(userData.createdTasks);
+        setCompletedItems(userData.completedTasks);
+        message.success("Task toggled successfully");
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Error toggling task");
+    }
+  };
+
   const addToCreatedTasks = async () => {
     try {
       const res = await axios.post(
@@ -63,6 +90,7 @@ const Home = () => {
       if (res.data.success) {
         const userData = res.data.data;
         setItems(userData.createdTasks);
+        setCompletedItems(userData.completedTasks);
         message.success("Task added successfully");
       } else {
         message.error(res.data.message);
@@ -73,27 +101,28 @@ const Home = () => {
     }
   };
 
-  const moveTaskToCompleted = async (taskId) => {
-    try {
-      const res= await axios.post("/api/v1/user/addToCompletedTasks", { taskId },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if(res.data.success){
-          const userData = res.data.data;
-          setItems(userData.createdTasks);
-          message.success("Task moved to completed tasks");
-        }
-        else{
-          message.error(res.data.message);
-        }
-    } catch (error) {
-      console.error(error);
-      message.error("Error in moving task to completed tasks");
-    }
-  };
+  // const moveTaskToCompleted = async (taskId) => {
+  //   try {
+  //     const res= await axios.post("/api/v1/user/addToCompletedTasks", { taskId },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //         },
+  //       });
+  //       if(res.data.success){
+  //         const userData = res.data.data;
+  //         setItems(userData.createdTasks);
+  //         setCompletedItems(userData.completedTasks);
+  //         message.success("Task moved to completed tasks");
+  //       }
+  //       else{
+  //         message.error(res.data.message);
+  //       }
+  //   } catch (error) {
+  //     console.error(error);
+  //     message.error("Error in moving task to completed tasks");
+  //   }
+  // };
 
   const deleteTask = async (taskId) => {
     try {
@@ -106,11 +135,32 @@ const Home = () => {
       if(res.data.success){
         const userData = res.data.data;
         setItems(userData.createdTasks);
+        setCompletedItems(userData.completedTasks);
         message.success("Task deleted successfully");
       }
     } catch (error) {
       console.error(error);
       message.error("Error in deleting task");
+    }
+  };
+
+  const deleteCompletedTask = async (taskId) => {
+    try {
+      const res = await axios.delete(`/api/v1/user/deleteCompletedTask/${taskId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (res.data.success) {
+        const userData = res.data.data;
+        setCompletedItems(userData.completedTasks);
+        message.success("Completed task deleted successfully");
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Error deleting completed task");
     }
   };
 
@@ -126,7 +176,6 @@ const Home = () => {
         {user?.user?.name} <i className="ri-shut-down-line"></i>{" "}
       </button>
 
-      <div className="inner">
         <div className="container">
           <div className="heading">
             <h1>TodoPulse</h1>
@@ -145,14 +194,27 @@ const Home = () => {
                   key={index}
                   id={index}
                   text={task}
-                  onChecked={moveTaskToCompleted}
+                  onToggle={toggleTask}
                   onDelete={() => deleteTask(index)}
                 />
               ))}
             </ul>
           </div>
+
+          <div>
+          <ul>
+            {completedItems.map((task, index) => (
+              <Item
+                key={index}
+                id={index}
+                text={task}
+                onToggle={toggleTask}
+                onDelete={() => deleteCompletedTask(index)}
+              />
+            ))}
+        </ul>
+          </div>
         </div>
-      </div>
     </div>
   );
 };

@@ -152,5 +152,57 @@ const fetchUserDataController = async (req, res) => {
     }
 }
 
+const toggleTaskController = async (req, res) => {
+    try {
+      const { taskId } = req.params;
+      const { taskType } = req.body;
+      const user = await userModel.findById(req.body.userId);
+  
+      let sourceArray, destinationArray;
+      if (taskType === "completedTasks") {
+        sourceArray = user.completedTasks;
+        destinationArray = user.createdTasks;
+      } else {
+        sourceArray = user.createdTasks;
+        destinationArray = user.completedTasks;
+      }
+  
+      const task = sourceArray.splice(taskId, 1)[0];
+      task.isCompleted = !task.isCompleted;
+      destinationArray.push(task);
+  
+      await user.save();
+  
+      res.status(200).send({
+        message: 'Task toggled successfully',
+        success: true,
+        data: user
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Error toggling task', success: false });
+    }
+  };
+  
+  const deleteCompletedTaskController = async (req, res) => {
+    try {
+      const { taskId } = req.params;
+      const user = await userModel.findById(req.body.userId);
+      user.completedTasks.splice(taskId, 1);
+      await user.save();
+      res.status(200).send({
+        message: 'Completed task deleted successfully',
+        success: true,
+        data: user
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Error deleting completed task', success: false });
+    }
+  };
+  
+  
+  
 
-export { registerController, loginController, authController, addToCreatedTasks, addToCompletedTasks, deleteTask, fetchUserDataController }
+
+export { registerController, loginController, authController, addToCreatedTasks, addToCompletedTasks, deleteTask, fetchUserDataController, deleteCompletedTaskController, toggleTaskController }
