@@ -18,7 +18,7 @@ const connectDB = async () => {
 };
 connectDB();
 
-console.log("hello world -> console")
+// console.log("hello world -> console")
 
 const port = process.env.PORT || 4000
 app.listen(port, ()=>{
