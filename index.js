@@ -2,10 +2,10 @@ import express from "express";
 import dotenv from "dotenv"
 import mongoose from 'mongoose';
 import "colors"
+import morgan from "morgan";
+import router from "./routes/userRoutes.js"
 
-const app=express();
 dotenv.config();
-app.use(express.json());
 
 // Database connection
 const connectDB = async () => {
@@ -18,8 +18,16 @@ const connectDB = async () => {
 };
 connectDB();
 
-// console.log("hello world -> console")
+const app=express();
 
+app.use(express.json());
+app.use(morgan('dev'));
+
+// Routes
+app.use("/api/v1/user", router);
+
+
+// Running the server
 const port = process.env.PORT || 4000
 app.listen(port, ()=>{
     console.log(`Server is running in ${process.env.NODE_MODE} mode on port ${process.env.PORT}`.bgCyan.white);
