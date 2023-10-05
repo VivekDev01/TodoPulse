@@ -15,6 +15,8 @@ const Home = () => {
   const [items, setItems] = useState([]);
   const [completedItems, setCompletedItems] = useState([]);
 
+  const [editedTask, setEditedTask] = useState(null);
+
   useEffect(() => {
     // Fetch user data and update the items state
     const fetchUserData = async () => {
@@ -140,6 +142,32 @@ const Home = () => {
     }
   };
 
+  const editTaskText = async (taskId, newText, isCompleted) => {
+    try {
+      const taskType = isCompleted ? "completedTasks" : "createdTasks";
+      const res = await axios.put(
+        `/api/v1/user/editTask/${taskId}`,
+        { text: newText, taskType },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.data.success) {
+        const userData = res.data.data;
+        setItems(userData.createdTasks);
+        setCompletedItems(userData.completedTasks);
+        message.success("Task edited successfully");
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Error editing task");
+    }
+  };
+
   const handleLogout = () => {
     localStorage.clear();
     message.success("Logout Successfully");
@@ -163,33 +191,35 @@ const Home = () => {
             value={inputText}
           />
 
-          <div>
-            <ul>
-              {items.map((task, index) => (
-                <Item
-                  key={index}
-                  id={index}
-                  text={task}
-                  onToggle={toggleTask}
-                  onDelete={() => deleteTask(index)}
-                />
-              ))}
-            </ul>
-          </div>
-
-          <div>
-          <ul>
-            {completedItems.map((task, index) => (
-              <Item
-                key={index}
-                id={index}
-                text={task}
-                onToggle={toggleTask}
-                onDelete={() => deleteCompletedTask(index)}
-              />
-            ))}
+    <div>
+        <ul>
+          {items.map((task, index) => (
+            <Item
+              key={index}
+              id={index}
+              text={task}
+              onToggle={toggleTask}
+              onDelete={() => deleteTask(index)}
+              onEdit={editTaskText}
+            />
+          ))}
         </ul>
-          </div>
+      </div>
+
+      <div>
+        <ul>
+          {completedItems.map((task, index) => (
+            <Item
+              key={index}
+              id={index}
+              text={task}
+              onToggle={toggleTask}
+              onDelete={() => deleteCompletedTask(index)}
+              onEdit={editTaskText}
+            />
+          ))}
+        </ul>
+      </div>
         </div>
     </div>
   );

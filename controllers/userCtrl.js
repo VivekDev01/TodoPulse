@@ -182,9 +182,42 @@ const toggleTaskController = async (req, res) => {
       res.status(500).send({ message: 'Error deleting completed task', success: false });
     }
   };
-  
+
   
   
 
+const editTaskController = async (req, res) => {
+    try {
+      const { taskId } = req.params;
+      const { text, taskType } = req.body;
+      const user = await userModel.findById(req.body.userId);
+  
+      let tasksArray;
+      if (taskType === "completedTasks") {
+        tasksArray = user.completedTasks;
+      } else {
+        tasksArray = user.createdTasks;
+      }
+  
+      const task = tasksArray[taskId];
+      if (task) {
+        task.text = text;
+        await user.save();
+  
+        res.status(200).send({
+          message: 'Task edited successfully',
+          success: true,
+          data: user
+        });
+      } else {
+        res.status(404).send({ message: 'Task not found', success: false });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Error editing task', success: false });
+    }
+  };
+  
+ 
 
-export { registerController, loginController, authController, addToCreatedTasks, deleteTask, fetchUserDataController, deleteCompletedTaskController, toggleTaskController }
+export { registerController, loginController, authController, addToCreatedTasks, deleteTask, fetchUserDataController, deleteCompletedTaskController, toggleTaskController, editTaskController }
