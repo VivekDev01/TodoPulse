@@ -101,24 +101,6 @@ const addToCreatedTasks = async (req, res) => {
     }
 };
 
-const addToCompletedTasks = async (req, res) => {
-    try {
-        const { taskId } = req.body;
-        const user = await userModel.findById(req.body.userId);
-        const task = user.createdTasks.splice(taskId, 1)[0];
-        task.isCompleted = true;
-        user.completedTasks.push(task);
-        await user.save();
-        res.status(200).send({
-            message: 'Task moved to completed tasks',
-            success: true,
-            data: user
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ message: 'Error moving task to completed tasks', success: false });
-    }
-};
 
 const deleteTask = async (req, res) => {
     try {
@@ -205,4 +187,4 @@ const toggleTaskController = async (req, res) => {
   
 
 
-export { registerController, loginController, authController, addToCreatedTasks, addToCompletedTasks, deleteTask, fetchUserDataController, deleteCompletedTaskController, toggleTaskController }
+export { registerController, loginController, authController, addToCreatedTasks, deleteTask, fetchUserDataController, deleteCompletedTaskController, toggleTaskController }

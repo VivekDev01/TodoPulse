@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import "../styles/home.css";
 import InputArea from "../components/InputArea";
 import Item from "../components/Item";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
-import { showLoading, hideLoading } from "../redux/features/alertSlice";
 import axios from "axios";
 
 const Home = () => {
   const user = useSelector((state) => state.user);
   const Navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [inputText, setInputText] = useState("");
   const [items, setItems] = useState([]);
@@ -101,28 +99,6 @@ const Home = () => {
     }
   };
 
-  // const moveTaskToCompleted = async (taskId) => {
-  //   try {
-  //     const res= await axios.post("/api/v1/user/addToCompletedTasks", { taskId },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //         },
-  //       });
-  //       if(res.data.success){
-  //         const userData = res.data.data;
-  //         setItems(userData.createdTasks);
-  //         setCompletedItems(userData.completedTasks);
-  //         message.success("Task moved to completed tasks");
-  //       }
-  //       else{
-  //         message.error(res.data.message);
-  //       }
-  //   } catch (error) {
-  //     console.error(error);
-  //     message.error("Error in moving task to completed tasks");
-  //   }
-  // };
 
   const deleteTask = async (taskId) => {
     try {
