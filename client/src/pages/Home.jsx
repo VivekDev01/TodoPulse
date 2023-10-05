@@ -1,39 +1,118 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/home.css";
 import InputArea from "../components/InputArea";
 import Item from "../components/Item";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { showLoading, hideLoading } from "../redux/features/alertSlice";
+import axios from "axios";
 
 const Home = () => {
-
-const user = useSelector((state) => state.user);
-const Navigate = useNavigate();
-
+  const user = useSelector((state) => state.user);
+  const Navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [inputText, setInputText] = useState("");
   const [items, setItems] = useState([]);
 
-  function handleChange(event) {
-    const newValue = event.target.value;
-    setInputText(newValue);
-  }
+  useEffect(() => {
+    // Fetch user data and update the items state
+    const fetchUserData = async () => {
+      try {
+        const res = await axios.get("/api/v1/user/fetchUserData",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+        );
+        if(res.data.success){
+          const userData = res.data.data;
+          setItems(userData.createdTasks);
+          message.success("User data fetched successfully");
+        }
+        else{
+          message.error(res.data.message);
+        }
+      } catch (error) {
+        console.error(error);
+        message.error("Error in fetching user data");
+      }
+    };
 
-  function addItem() {
-    setItems((prevItems) => {
-      return [...prevItems, inputText];
-    });
-    setInputText("");
-  }
+    fetchUserData();
+  }, []); // Empty dependency array ensures this effect runs once after initial render
 
-  function deleteItem(id) {
-    setItems((prevItems) => {
-      return prevItems.filter((item, index) => {
-        return index !== id;
+  const handleChange = (event) => {
+    setInputText(event.target.value);
+  };
+
+  const addToCreatedTasks = async () => {
+    try {
+      const res = await axios.post(
+        "/api/v1/user/addToCreatedTasks",
+        { text: inputText },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setInputText("");
+      if (res.data.success) {
+        const userData = res.data.data;
+        setItems(userData.createdTasks);
+        message.success("Task added successfully");
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Error in adding task");
+    }
+  };
+
+  const moveTaskToCompleted = async (taskId) => {
+    try {
+      const res= await axios.post("/api/v1/user/addToCompletedTasks", { taskId },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if(res.data.success){
+          const userData = res.data.data;
+          setItems(userData.createdTasks);
+          message.success("Task moved to completed tasks");
+        }
+        else{
+          message.error(res.data.message);
+        }
+    } catch (error) {
+      console.error(error);
+      message.error("Error in moving task to completed tasks");
+    }
+  };
+
+  const deleteTask = async (taskId) => {
+    try {
+      const res= await axios.delete(`/api/v1/user/deleteTask/${taskId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
-    });
-  }
+      if(res.data.success){
+        const userData = res.data.data;
+        setItems(userData.createdTasks);
+        message.success("Task deleted successfully");
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Error in deleting task");
+    }
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -41,12 +120,11 @@ const Navigate = useNavigate();
     Navigate("/login");
   };
 
-
   return (
     <div className="outermost">
-      
-      <button onClick={handleLogout} class="button-92" >{user?.user?.name} <i class="ri-shut-down-line"></i> </button>
-    
+      <button onClick={handleLogout} className="button-92">
+        {user?.user?.name} <i className="ri-shut-down-line"></i>{" "}
+      </button>
 
       <div className="inner">
         <div className="container">
@@ -55,19 +133,20 @@ const Navigate = useNavigate();
           </div>
 
           <InputArea
-            addItemTrig={addItem}
+            addItemTrig={addToCreatedTasks}
             changeTrig={handleChange}
             value={inputText}
           />
 
           <div>
             <ul>
-              {items.map((todoItem, index) => (
+              {items.map((task, index) => (
                 <Item
                   key={index}
                   id={index}
-                  text={todoItem}
-                  onChecked={deleteItem}
+                  text={task}
+                  onChecked={moveTaskToCompleted}
+                  onDelete={() => deleteTask(index)}
                 />
               ))}
             </ul>
