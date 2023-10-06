@@ -32,7 +32,7 @@ const Signup = () => {
     <div className="form-div">
       <Form
         layout="vertical"
-        className="form-content"
+        className="form-content-signup"
         onFinish={onFinishHandler}
       >
         <h4 className="text-center">SIGN UP</h4>

@@ -12,16 +12,27 @@
 }
 
 h4{
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
 }
 
-.form-content{
-    width: 25%;
+.form-content-signup{
+    width: 400px;
+    height: 550px;
     display: flex;
     flex-direction: column;
     border-radius: 5%;
     background-color: white;
-    padding: 20px 20px 15px 20px;
+    padding: 1rem;
+}
+
+.form-content-login{
+    display: flex;
+    flex-direction: column;
+    border-radius: 5%;
+    background-color: white;
+    padding: 1rem;
+    width: 400px;
+    height: 400px;
 }
 
 .button-style{
@@ -32,13 +43,25 @@ h4{
     color: white;
     font-weight: bolder;
     border-radius: 0 20% 0 20%;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .btn-login{
     align-self: center;
     font-size: small;
-    margin-top: 15px;
     text-decoration: none;
+}
+
+
+@media screen and (max-width: 480px){
+    .form-content-signup{
+        width: 300px;
+        height: 535px;
+    }
+
+    .form-content-login{
+        width: 300px;
+        height: 400px;
+    }
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input, message } from "antd";
-import "../styles/login.css"
+import "../styles/signup.css"
 import {Link, useNavigate} from "react-router-dom"
 import axios from "axios";
 import {useDispatch}  from 'react-redux'
@@ -33,7 +33,7 @@ const Login = () => {
 
   return (
     <div className="form-div">
-      <Form layout="vertical" className="form-content" onFinish={onFinishHandler}>
+      <Form layout="vertical" className="form-content-login" onFinish={onFinishHandler}>
         <h4 className="text-center">LOGIN</h4>
         <Form.Item label="Email" name="email">
           <Input type="email" required />
@@ -46,7 +46,7 @@ const Login = () => {
           Login
         </button>
 
-        <Link className="btn-signup" to="/signup">Sign Up</Link>
+        <Link className="btn-login" to="/signup">Sign Up</Link>
       </Form>
     </div>
   );
