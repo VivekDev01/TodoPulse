@@ -29,6 +29,20 @@ app.use("/api/v1/user", router);
 
 // Running the server
 const port = process.env.PORT || 4000
+
+
+// deployment config
+import path from "path"
+let __dirname = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/client/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+  });
+}
+
+
 app.listen(port, ()=>{
     console.log(`Server is running in ${process.env.NODE_MODE} mode on port ${process.env.PORT}`.bgCyan.white);
 });
