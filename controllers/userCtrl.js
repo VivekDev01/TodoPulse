@@ -11,7 +11,6 @@ const registerController = async (req, res) => {
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
 
-        //if password not matches
         if (password !== confirmPassword) {
             return res.status(200).send({ message: 'Confirm Password not matchs', success: false })
         }

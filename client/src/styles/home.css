@@ -26,7 +26,6 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: start;
     align-items: space-between;
     box-shadow: 0 0 1em 0.2em #00000040;
   }
@@ -49,7 +48,6 @@
     box-sizing: border-box;
     background-color: transparent;
     padding: 0.3rem;
-    /* border: solid 3px transparent; */
     border-bottom: dashed 3px #FEC600;
     font-family: "Architects Daughter", cursive;
     font-size: 1rem;

@@ -15,12 +15,10 @@ const Home = () => {
   const [items, setItems] = useState([]);
   const [completedItems, setCompletedItems] = useState([]);
 
-  const [editedTask, setEditedTask] = useState(null);
 
   const year = new Date().getFullYear();
 
   useEffect(() => {
-    // Fetch user data and update the items state
     const fetchUserData = async () => {
       try {
         const res = await axios.get("/api/v1/user/fetchUserData",
@@ -34,7 +32,7 @@ const Home = () => {
           const userData = res.data.data;
           setItems(userData.createdTasks);
           setCompletedItems(userData.completedTasks);
-          message.success("User data fetched successfully");
+          // message.success("User data fetched successfully");
         }
         else{
           message.error(res.data.message);
@@ -46,7 +44,7 @@ const Home = () => {
     };
 
     fetchUserData();
-  }, []); // Empty dependency array ensures this effect runs once after initial render
+  }, []); 
 
   const handleChange = (event) => {
     setInputText(event.target.value);
@@ -56,7 +54,7 @@ const Home = () => {
     try {
       const res = await axios.post(
         `/api/v1/user/toggleTask/${taskId}`,
-        { taskType },  // sending the taskType (createdTasks or completedTasks)
+        { taskType },  
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -67,7 +65,7 @@ const Home = () => {
         const userData = res.data.data;
         setItems(userData.createdTasks);
         setCompletedItems(userData.completedTasks);
-        message.success("Task toggled successfully");
+        message.success("Task toggled successfully between completed and incompleted tasks");
       } else {
         message.error(res.data.message);
       }
