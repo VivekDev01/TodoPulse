@@ -56,10 +56,5 @@ Feel free to contribute to enhance the functionality or fix any bugs. Follow the
 
 ## License
 
-This project is licensed under the [Your License Name] License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License License - see the [LICENSE.md](https://github.com/VivekDev01/TodoPulse/blob/main/LICENSE) file for details.
 
-## Acknowledgements
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc.
